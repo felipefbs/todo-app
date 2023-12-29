@@ -4,13 +4,12 @@ ADD src ./src
 COPY vite.config.js .
 COPY package*.json .
 RUN npm i && \
-    node ./node_modules/vite/bin/vite.js build
+    npm run build
 
 FROM golang:alpine as go_builder
 WORKDIR /app
-COPY main.go .
-COPY go.* .
-RUN go build -o ./app .
+COPY . .
+RUN go build -o ./app ./cmd/app/main.go
 
 FROM alpine
 WORKDIR /app

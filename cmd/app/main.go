@@ -30,9 +30,13 @@ func main() {
 		}
 	})
 
-	fmt.Println("Listening port 8080")
+	server := http.Server{
+		Addr:    ":8080",
+		Handler: r,
+	}
 
-	if err := http.ListenAndServe(":8080", r); err != nil {
+	fmt.Println("Listening port 8080")
+	if err := server.ListenAndServe(); err != nil {
 		log.Fatal(err)
 	}
 }
