@@ -1,0 +1,9 @@
+{
+  "type": "module",
+  "devDependencies": {
+    "vite": "^5.0.10"
+  },
+  "dependencies": {
+    "htmx.org": "^1.9.10"
+  }
+}

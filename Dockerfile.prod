@@ -1,0 +1,22 @@
+FROM node:alpine as node_builder
+WORKDIR /app
+ADD src ./src
+COPY vite.config.js .
+COPY package*.json .
+RUN npm i && \
+    node ./node_modules/vite/bin/vite.js build
+
+FROM golang:alpine as go_builder
+WORKDIR /app
+COPY main.go .
+COPY go.* .
+RUN go build -o ./app .
+
+FROM alpine
+WORKDIR /app
+COPY --from=node_builder ./app/static ./static
+COPY --from=go_builder ./app/app .
+COPY ./templates templates
+EXPOSE 8080
+RUN chmod +x app
+CMD [ "./app" ]
