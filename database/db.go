@@ -3,15 +3,23 @@ package database
 import (
 	"database/sql"
 	"log"
+	"os"
+	"sync"
 
 	_ "github.com/go-sql-driver/mysql"
 )
 
-var database *sql.DB
+var (
+	database *sql.DB
+	lock     = &sync.Mutex{}
+)
 
-func Connect() *sql.DB {
+func GetDatabase() *sql.DB {
 	if database == nil {
-		db, err := sql.Open("mysql", "root:safe_pwd@/database") // os.Getenv("DB_URL"))
+		lock.Lock()
+		defer lock.Unlock()
+
+		db, err := sql.Open("mysql", os.Getenv("DB_URL"))
 		if err != nil {
 			log.Fatal(err)
 		}
