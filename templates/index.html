@@ -9,7 +9,16 @@
     <link src="/static/index.css" />
   </head>
   <body>
-    <p class="text-5xl">Hello, HTMX!</p>
+    <div class="max-w-screen-md mx-auto mt8">
+      <div class="flex justify-between items-center">
+        {{template "TotalCount"}} {{template "CompletedCount"}}
+      </div>
+      {{template "Form"}}
+
+      <div id="items" class="space-y-2.5 mt-4">
+        {{ range .Items}}{{template "Item"}}{{end}}
+      </div>
+    </div>
   </body>
 </html>
 {{ end }}
