@@ -77,6 +77,17 @@ func (svc *Service) FetchCount() (int, error) {
 	return count, nil
 }
 
+func (svc *Service) FetchCompletedCount() (int, error) {
+	var count int
+
+	err := svc.db.QueryRow("select count(*) from tasks where completed = true").Scan(&count)
+	if err != nil {
+		return 0, err
+	}
+
+	return count, nil
+}
+
 func (svc *Service) InsertTask(title, description string) (*Item, error) {
 	count, err := svc.FetchCount()
 	if err != nil {
