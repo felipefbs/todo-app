@@ -142,3 +142,49 @@ func (handler *Handler) DeleteTask(w http.ResponseWriter, r *http.Request) {
 	handler.tmpl.ExecuteTemplate(w, "TotalCount", map[string]any{"Count": count, "SwapOOB": true})
 	handler.tmpl.ExecuteTemplate(w, "CompletedCount", map[string]any{"Count": completedCount, "SwapOOB": true})
 }
+
+func (handler *Handler) EditTask(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(chi.URLParam(r, "id"))
+	if err != nil {
+		log.Print(err)
+		w.WriteHeader(http.StatusBadRequest)
+
+		return
+	}
+
+	task, err := handler.svc.FetchTask(id)
+	if err != nil {
+		log.Print(err)
+		w.WriteHeader(http.StatusInternalServerError)
+
+		return
+	}
+
+	handler.tmpl.ExecuteTemplate(w, "Item", map[string]any{"Item": task, "Editing": true})
+}
+
+func (handler *Handler) UpdateTask(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(chi.URLParam(r, "id"))
+	if err != nil {
+		log.Print(err)
+		w.WriteHeader(http.StatusBadRequest)
+
+		return
+	}
+
+	title := r.FormValue("title")
+	description := r.FormValue("description")
+	if title == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	item, err := handler.svc.UpdateTask(id, title, description)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+
+		return
+	}
+
+	handler.tmpl.ExecuteTemplate(w, "Item", map[string]any{"Item": item, "Editing": false})
+}
