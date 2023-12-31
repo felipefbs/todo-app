@@ -38,4 +38,5 @@ services:
 
 networks:
   todo-app:
+    name: todo-app
     driver: bridge

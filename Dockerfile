@@ -9,4 +9,5 @@ RUN npm i && \
     npm run build
 RUN go build -o ./app ./cmd/app/main.go && \
     chmod +x ./app
+ENV DB_URL=root:safe_pwd@tcp(database:3306)/database
 CMD [ "./app" ]
