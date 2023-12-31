@@ -4,6 +4,9 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"strconv"
+
+	"github.com/go-chi/chi/v5"
 )
 
 type Handler struct {
@@ -70,4 +73,34 @@ func (handler *Handler) CreateTask(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 	handler.tmpl.ExecuteTemplate(w, "Form", nil)
 	handler.tmpl.ExecuteTemplate(w, "TotalCount", map[string]any{"Count": count, "SwapOOB": true})
+}
+
+func (handler *Handler) ToggleTask(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(chi.URLParam(r, "id"))
+	if err != nil {
+		log.Print(err)
+		w.WriteHeader(http.StatusBadRequest)
+
+		return
+	}
+
+	_, err = handler.svc.ToggleTask(id)
+	if err != nil {
+		log.Print(err)
+		w.WriteHeader(http.StatusInternalServerError)
+
+		return
+	}
+
+	completedCount, err := handler.svc.FetchCompletedCount()
+	if err != nil {
+		log.Print(err)
+		w.WriteHeader(http.StatusInternalServerError)
+
+		return
+	}
+
+	handler.tmpl.ExecuteTemplate(w, "CompletedCount",
+		map[string]any{"Count": completedCount, "SwapOOB": true},
+	)
 }

@@ -171,3 +171,12 @@ func (svc *Service) OrderTasks(values []int) error {
 
 	return nil
 }
+
+func (svc *Service) ToggleTask(id int) (*Item, error) {
+	_, err := svc.db.Exec("update tasks set completed = case when completed = 1 then 0 else 1 end where id = ?", id)
+	if err != nil {
+		return nil, err
+	}
+
+	return svc.FetchTask(id)
+}

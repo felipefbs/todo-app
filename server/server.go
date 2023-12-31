@@ -31,4 +31,5 @@ func registerRoutes(r chi.Router, templates *template.Template) {
 
 	r.Get("/", handler.GetTasks)
 	r.Post("/tasks", handler.CreateTask)
+	r.Put("/tasks/{id}/toggle", handler.ToggleTask)
 }
