@@ -42,11 +42,18 @@ func TestQueryData(t *testing.T) {
 
 	totalItemCount := 3
 	firstItemID := 1
+	totalCompletedCount := 1
 
 	t.Run("Query count tasks", func(t *testing.T) {
 		count, err := svc.FetchCount()
 		assert.Nil(t, err)
 		assert.Equal(t, totalItemCount, count)
+	})
+
+	t.Run("Query completed count tasks", func(t *testing.T) {
+		count, err := svc.FetchCompletedCount()
+		assert.Nil(t, err)
+		assert.Equal(t, totalCompletedCount, count)
 	})
 
 	t.Run("Query all tasks", func(t *testing.T) {
