@@ -105,3 +105,40 @@ func (handler *Handler) ToggleTask(w http.ResponseWriter, r *http.Request) {
 		map[string]any{"Count": completedCount, "SwapOOB": true},
 	)
 }
+
+func (handler *Handler) DeleteTask(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(chi.URLParam(r, "id"))
+	if err != nil {
+		log.Print(err)
+		w.WriteHeader(http.StatusBadRequest)
+
+		return
+	}
+
+	err = handler.svc.Delete(id)
+	if err != nil {
+		log.Print(err)
+		w.WriteHeader(http.StatusInternalServerError)
+
+		return
+	}
+
+	count, err := handler.svc.FetchCount()
+	if err != nil {
+		log.Print(err)
+		w.WriteHeader(http.StatusInternalServerError)
+
+		return
+	}
+
+	completedCount, err := handler.svc.FetchCompletedCount()
+	if err != nil {
+		log.Print(err)
+		w.WriteHeader(http.StatusInternalServerError)
+
+		return
+	}
+
+	handler.tmpl.ExecuteTemplate(w, "TotalCount", map[string]any{"Count": count, "SwapOOB": true})
+	handler.tmpl.ExecuteTemplate(w, "CompletedCount", map[string]any{"Count": completedCount, "SwapOOB": true})
+}
