@@ -35,4 +35,5 @@ func registerRoutes(r chi.Router, templates *template.Template) {
 	r.Delete("/tasks/{id}", handler.DeleteTask)
 	r.Get("/tasks/{id}/edit", handler.EditTask)
 	r.Put("/tasks/{id}", handler.UpdateTask)
+	r.Put("/tasks", handler.OrderTasks)
 }

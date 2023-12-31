@@ -188,3 +188,30 @@ func (handler *Handler) UpdateTask(w http.ResponseWriter, r *http.Request) {
 
 	handler.tmpl.ExecuteTemplate(w, "Item", map[string]any{"Item": item, "Editing": false})
 }
+
+func (handler *Handler) OrderTasks(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		log.Print(err)
+		return
+	}
+
+	var idList []int
+
+	for _, v := range r.Form["item"] {
+		value, err := strconv.Atoi(v)
+		if err != nil {
+			log.Print(err)
+			return
+		}
+
+		idList = append(idList, value)
+	}
+
+	err = handler.svc.OrderTasks(idList)
+	if err != nil {
+		log.Print(err)
+
+		return
+	}
+}
