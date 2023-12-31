@@ -58,7 +58,7 @@ func (handler *Handler) CreateTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err := handler.svc.InsertTask(title, description)
+	createdItem, err := handler.svc.InsertTask(title, description)
 	if err != nil {
 		log.Print(err)
 		return
@@ -72,6 +72,7 @@ func (handler *Handler) CreateTask(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusCreated)
 	handler.tmpl.ExecuteTemplate(w, "Form", nil)
+	handler.tmpl.ExecuteTemplate(w, "Item", map[string]any{"Item": createdItem, "SwapOOB": true})
 	handler.tmpl.ExecuteTemplate(w, "TotalCount", map[string]any{"Count": count, "SwapOOB": true})
 }
 
