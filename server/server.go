@@ -2,9 +2,10 @@ package server
 
 import (
 	"html/template"
-	"log"
 	"net/http"
 
+	"github.com/felipefbs/todo-app/database"
+	"github.com/felipefbs/todo-app/task"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 )
@@ -22,13 +23,12 @@ func Init(templates *template.Template) *http.Server {
 }
 
 func registerRoutes(r chi.Router, templates *template.Template) {
+	db := database.GetDatabase()
+	svc := task.NewService(db)
+	handler := task.NewHandler(svc, templates)
+
 	r.Handle("/static/*", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
 
-	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		err := templates.ExecuteTemplate(w, "Base", nil)
-		if err != nil {
-			log.Println(err)
-			return
-		}
-	})
+	r.Get("/", handler.GetTasks)
+	r.Post("/tasks", handler.CreateTask)
 }
